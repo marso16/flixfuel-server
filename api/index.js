@@ -7,12 +7,12 @@ const helmet = require("helmet");
 const chalk = require("chalk");
 // const rateLimit = require("express-rate-limit");
 
-const authRoutes = require("./routes/auth");
-const productRoutes = require("./routes/products");
-const cartRoutes = require("./routes/cart");
-const orderRoutes = require("./routes/orders");
-const paymentRoutes = require("./routes/payment");
-const wishlistRoutes = require("./routes/wishlist");
+const authRoutes = require("../routes/auth");
+const productRoutes = require("../routes/products");
+const cartRoutes = require("../routes/cart");
+const orderRoutes = require("../routes/orders");
+const paymentRoutes = require("../routes/payment");
+const wishlistRoutes = require("../routes/wishlist");
 
 const app = express();
 
