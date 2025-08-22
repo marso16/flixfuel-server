@@ -1,5 +1,5 @@
 require("dotenv").config({ quiet: true });
-
+const serverless = require("serverless-http");
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -69,3 +69,5 @@ mongoose
     console.error(chalk.red("❌ MongoDB connection failed:"), err.message);
     process.exit(1);
   });
+
+module.exports = serverless(app);
