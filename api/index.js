@@ -5,8 +5,8 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const helmet = require("helmet");
 const chalk = require("chalk");
+// const rateLimit = require("express-rate-limit");
 
-// Import your route handlers
 const authRoutes = require("../routes/auth");
 const productRoutes = require("../routes/products");
 const cartRoutes = require("../routes/cart");
@@ -15,6 +15,9 @@ const paymentRoutes = require("../routes/payment");
 const wishlistRoutes = require("../routes/wishlist");
 
 const app = express();
+
+// ====== Load Environment Variables ======
+const MONGODB_URI = process.env.MONGODB_URI;
 
 // ====== Middleware ======
 app.use(helmet());
@@ -53,9 +56,9 @@ app.get("/", (req, res) => {
   res.status(200).json({ message: "Hello World from backend" });
 });
 
-// ====== DB Connection ======
+// ====== DB Connection & Server Start ======
 mongoose
-  .connect(process.env.MONGODB_URI)
+  .connect(MONGODB_URI)
   .then(() => {
     console.log(chalk.green("🚀 DB CONNECTED"));
   })
