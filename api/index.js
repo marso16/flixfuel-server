@@ -5,8 +5,8 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const helmet = require("helmet");
 const chalk = require("chalk");
-// const rateLimit = require("express-rate-limit");
 
+// Import your route handlers
 const authRoutes = require("../routes/auth");
 const productRoutes = require("../routes/products");
 const cartRoutes = require("../routes/cart");
@@ -15,10 +15,6 @@ const paymentRoutes = require("../routes/payment");
 const wishlistRoutes = require("../routes/wishlist");
 
 const app = express();
-
-// ====== Load Environment Variables ======
-const PORT = process.env.PORT;
-const MONGODB_URI = process.env.MONGODB_URI;
 
 // ====== Middleware ======
 app.use(helmet());
@@ -43,12 +39,6 @@ app.use(
   })
 );
 
-// const limiter = rateLimit({
-//   windowMs: 15 * 60 * 1000,
-//   max: 300,
-// });
-// app.use(limiter);
-
 app.use(express.json());
 
 // ====== API ROUTES ======
@@ -63,18 +53,14 @@ app.get("/", (req, res) => {
   res.status(200).json({ message: "Hello World from backend" });
 });
 
-// ====== DB Connection & Server Start ======
+// ====== DB Connection ======
 mongoose
-  .connect(MONGODB_URI)
+  .connect(process.env.MONGODB_URI)
   .then(() => {
     console.log(chalk.green("🚀 DB CONNECTED"));
-    app.listen(PORT, () => {
-      console.log(chalk.green(`🚀 SERVER RUNNING...`));
-    });
   })
   .catch((err) => {
     console.error(chalk.red("❌ MongoDB connection failed:"), err.message);
-    process.exit(1);
   });
 
 module.exports = app;
