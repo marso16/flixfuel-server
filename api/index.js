@@ -52,12 +52,12 @@ app.use(
 app.use(express.json());
 
 // ====== API ROUTES ======
-app.use("/api/auth", authRoutes);
-app.use("/api/products", productRoutes);
-app.use("/api/cart", cartRoutes);
-app.use("/api/orders", orderRoutes);
-app.use("/api/payment", paymentRoutes);
-app.use("/api/wishlist", wishlistRoutes);
+app.use("/auth", authRoutes);
+app.use("/products", productRoutes);
+app.use("/cart", cartRoutes);
+app.use("/orders", orderRoutes);
+app.use("/payment", paymentRoutes);
+app.use("/wishlist", wishlistRoutes);
 
 app.get("/", (req, res) => {
   res.status(200).json({ message: "Hello World from backend" });
