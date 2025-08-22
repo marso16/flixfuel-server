@@ -23,18 +23,19 @@ const MONGODB_URI = process.env.MONGODB_URI;
 // ====== Middleware ======
 app.use(helmet());
 
-const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS.split(",");
+const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || "").split(",");
 
 app.use(
   cors({
-    origin: function (origin, callback) {
+    origin: (origin, callback) => {
       if (
         !origin ||
         ALLOWED_ORIGINS.includes(origin) ||
-        /^http:\/\/localhost:\d+$/.test(origin)
+        /^http:\/\/localhost(:\d+)?$/.test(origin)
       ) {
         callback(null, true);
       } else {
+        console.log(`Blocked by CORS: ${origin}`);
         callback(new Error("Not allowed by CORS"));
       }
     },
