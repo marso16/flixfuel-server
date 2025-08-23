@@ -27,15 +27,15 @@ const NODE_ENV = process.env.NODE_ENV || "development";
 // ====== Middleware ======
 app.use(helmet());
 
-const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS.split(",");
-
+const allowedOrigins = process.env.ALLOWED_ORIGINS.split(",");
 app.use(
   cors({
     origin: function (origin, callback) {
-      if (!origin || ALLOWED_ORIGINS.includes(origin)) {
-        callback(null, true);
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
       } else {
-        callback(new Error("Not allowed by CORS"));
+        return callback(new Error("Not allowed by CORS"));
       }
     },
     credentials: true,
