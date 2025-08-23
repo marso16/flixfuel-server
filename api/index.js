@@ -5,6 +5,8 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const helmet = require("helmet");
 const chalk = require("chalk");
+const path = require("path");
+const favicon = require("serve-favicon");
 
 const authRoutes = require("../routes/auth");
 const productRoutes = require("../routes/products");
@@ -14,6 +16,9 @@ const paymentRoutes = require("../routes/payment");
 const wishlistRoutes = require("../routes/wishlist");
 
 const app = express();
+
+app.use(favicon(path.join(__dirname, "public", "favicon.ico")));
+app.use(express.static(path.join(__dirname, "public")));
 
 // ====== Load Environment Variables ======
 const MONGODB_URI = process.env.MONGODB_URI;
