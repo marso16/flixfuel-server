@@ -482,7 +482,7 @@ userSchema.methods.generateEmailVerificationToken = function () {
 // Method to generate OTP
 userSchema.methods.generateOTP = function () {
   const otp = Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit OTP
-  
+
   this.otp = crypto.createHash("sha256").update(otp).digest("hex");
 
   this.otpExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
