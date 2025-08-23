@@ -2,6 +2,7 @@ const express = require("express");
 const { body } = require("express-validator");
 const { protect, admin } = require("../middleware/auth");
 const authController = require("../controllers/auth");
+const googleAuthController = require("../controllers/googleAuth");
 
 const router = express.Router();
 
@@ -143,5 +144,25 @@ router.post(
   ],
   authController.resetPassword
 );
+
+// Google OAuth routes
+router.post(
+  "/google",
+  [
+    body("token").notEmpty().withMessage("Google token is required"),
+  ],
+  googleAuthController.googleLogin
+);
+
+router.post(
+  "/link-google",
+  protect,
+  [
+    body("token").notEmpty().withMessage("Google token is required"),
+  ],
+  googleAuthController.linkGoogleAccount
+);
+
+router.delete("/unlink-google", protect, googleAuthController.unlinkGoogleAccount);
 
 module.exports = router;
