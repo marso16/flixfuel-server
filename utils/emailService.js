@@ -26,24 +26,24 @@ const sendOTPEmail = async (email, otp, name) => {
       to: email,
       subject: "🔐 Verify Your Email Address",
       html: `
-      <div style="font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f5f6fa; padding: 40px 20px;">
-        <div style="max-width: 600px; margin: auto; background: #ffffff; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); overflow: hidden;">
-          <div style="background-color: #1E90FF; padding: 25px; text-align: center;">
-            <h1 style="color: #fff; margin: 0; font-size: 28px;">Email Verification</h1>
+      <div style="font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f9fafc; padding: 40px 20px;">
+        <div style="max-width: 600px; margin: auto; background: #ffffff; border-radius: 14px; box-shadow: 0 12px 24px rgba(0,0,0,0.08); overflow: hidden;">
+          <div style="background-color: #1E90FF; padding: 30px; text-align: center;">
+            <h1 style="color: #fff; margin: 0; font-size: 28px; font-weight: 700;">Email Verification</h1>
           </div>
-          <div style="padding: 35px; line-height: 1.6; color: #333;">
-            <p style="font-size: 16px;">Hi <strong>${name}</strong>,</p>
-            <p style="font-size: 15px;">Thank you for signing up. Use the OTP below to verify your email address:</p>
+          <div style="padding: 40px 35px; color: #333; line-height: 1.6;">
+            <p style="font-size: 16px;">Hello <strong>${name}</strong>,</p>
+            <p style="font-size: 15px; color: #555;">Thank you for registering with us! Please use the OTP below to verify your email address:</p>
             <div style="text-align: center; margin: 30px 0;">
-              <span style="display: inline-block; background: #eef5ff; color: #1E90FF; padding: 18px 36px; font-size: 32px; font-weight: bold; letter-spacing: 8px; border-radius: 12px;">
+              <span style="display: inline-block; background: #e6f0ff; color: #1E90FF; padding: 20px 40px; font-size: 32px; font-weight: 700; letter-spacing: 6px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
                 ${otp}
               </span>
             </div>
-            <p style="font-size: 14px; color: #555;">This OTP is valid for 10 minutes.</p>
-            <p style="font-size: 14px; color: #888;">If you didn't request this, please ignore this email.</p>
+            <p style="font-size: 14px; color: #777;">This OTP is valid for 10 minutes.</p>
+            <p style="font-size: 14px; color: #aaa;">If you did not request this, please ignore this email.</p>
           </div>
           <div style="background-color: #f1f3f6; padding: 18px 30px; text-align: center; font-size: 12px; color: #999;">
-            This is an automated message, please do not reply.
+            Automated message — please do not reply.
           </div>
         </div>
       </div>
@@ -57,16 +57,10 @@ const sendOTPEmail = async (email, otp, name) => {
   }
 };
 
-/**
- * Send Order Confirmation Email
- * @param {string} email - Customer email
- * @param {object} order - { id, name, total, items, status, trackingNumber }
- */
 const sendOrderEmail = async (email, order) => {
   try {
     const transporter = createTransporter();
 
-    // Status-based content mapping
     const statusMessages = {
       pending: {
         title: "Order Received",
@@ -109,7 +103,7 @@ const sendOrderEmail = async (email, order) => {
     const itemsList = order.items
       .map(
         (item) =>
-          `<li style="margin:5px 0; font-size: 15px;">${item.name} (x${item.quantity}) - $${item.price}</li>`
+          `<li style="margin:6px 0; font-size: 15px; color:#555;">${item.name} (x${item.quantity}) — $${item.price}</li>`
       )
       .join("");
 
@@ -118,19 +112,19 @@ const sendOrderEmail = async (email, order) => {
       to: email,
       subject: `🛒 Order #${order.id} - ${statusContent.title}`,
       html: `
-      <div style="font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f5f6fa; padding: 40px 20px;">
-        <div style="max-width: 650px; margin: auto; background: #ffffff; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); overflow: hidden;">
-          <div style="background-color: ${statusContent.color}; padding: 25px; text-align: center;">
-            <h1 style="color: #fff; margin: 0; font-size: 26px;">${statusContent.title}</h1>
+      <div style="font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f9fafc; padding: 40px 20px;">
+        <div style="max-width: 650px; margin: auto; background: #fff; border-radius: 14px; box-shadow: 0 12px 24px rgba(0,0,0,0.08); overflow: hidden;">
+          <div style="background-color: ${statusContent.color}; padding: 28px; text-align: center;">
+            <h1 style="color: #fff; margin: 0; font-size: 26px; font-weight: 700;">${statusContent.title}</h1>
           </div>
-          <div style="padding: 35px; line-height: 1.6; color: #333;">
+          <div style="padding: 40px 35px; color: #333; line-height: 1.6;">
             <p style="font-size: 16px;">Hi <strong>${order.name}</strong>,</p>
-            <p style="font-size: 15px;">${statusContent.message}</p>
+            <p style="font-size: 15px; color:#555;">${statusContent.message}</p>
             <ul style="list-style: none; padding: 0; margin-top: 15px;">${itemsList}</ul>
-            <p style="font-size: 16px; font-weight: bold; margin-top: 20px;">Total: $${order.total}</p>
+            <p style="font-size: 16px; font-weight: 700; margin-top: 25px; color:#111;">Total: $${order.total}</p>
           </div>
           <div style="background-color: #f1f3f6; padding: 18px 30px; text-align: center; font-size: 12px; color: #999;">
-            This is an automated message, please do not reply.
+            Automated message — please do not reply.
           </div>
         </div>
       </div>

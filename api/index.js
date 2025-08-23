@@ -5,7 +5,6 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const helmet = require("helmet");
 const chalk = require("chalk");
-// const rateLimit = require("express-rate-limit");
 
 const authRoutes = require("../routes/auth");
 const productRoutes = require("../routes/products");
@@ -18,6 +17,7 @@ const app = express();
 
 // ====== Load Environment Variables ======
 const MONGODB_URI = process.env.MONGODB_URI;
+const NODE_ENV = process.env.NODE_ENV || "development";
 
 // ====== Middleware ======
 app.use(helmet());
@@ -56,6 +56,13 @@ mongoose
   .connect(MONGODB_URI)
   .then(() => {
     console.log(chalk.green("🚀 DB CONNECTED"));
+
+    if (NODE_ENV === "development") {
+      const PORT = process.env.PORT || 5000;
+      app.listen(PORT, () =>
+        console.log(chalk.blue(`🌍 Server running on http://localhost:${PORT}`))
+      );
+    }
   })
   .catch((err) => {
     console.error(chalk.red("❌ MongoDB connection failed:"), err.message);

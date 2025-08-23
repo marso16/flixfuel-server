@@ -83,16 +83,16 @@ const orderSchema = new mongoose.Schema(
       required: true,
       default: 0.0,
     },
-    taxPrice: {
-      type: Number,
-      required: true,
-      default: 0.0,
-    },
-    shippingPrice: {
-      type: Number,
-      required: true,
-      default: 0.0,
-    },
+    // taxPrice: {
+    //   type: Number,
+    //   required: true,
+    //   default: 0.0,
+    // },
+    // shippingPrice: {
+    //   type: Number,
+    //   required: true,
+    //   default: 0.0,
+    // },
     totalPrice: {
       type: Number,
       required: true,
@@ -168,13 +168,13 @@ orderSchema.methods.calculateTotals = function () {
     0
   );
 
-  // Calculate tax (8% for example)
-  this.taxPrice = Math.round(this.itemsPrice * 0.08 * 100) / 100;
+  // // Calculate tax (8% for example)
+  // this.taxPrice = Math.round(this.itemsPrice * 0.08 * 100) / 100;
 
-  // Calculate shipping (free for orders over $100)
-  this.shippingPrice = this.itemsPrice > 70 ? 0 : 10;
+  // // Calculate shipping (free for orders over $100)
+  // this.shippingPrice = this.itemsPrice > 70 ? 0 : 10;
 
-  this.totalPrice = this.itemsPrice + this.taxPrice + this.shippingPrice;
+  this.totalPrice = this.itemsPrice /*+ this.taxPrice + this.shippingPrice*/;
 };
 
 // Update order status
