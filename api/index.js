@@ -22,14 +22,14 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // ====== Load Environment Variables ======
 const MONGODB_URI = process.env.MONGODB_URI;
-const NODE_ENV = process.env.NODE_ENV || "development";
+const NODE_ENV = process.env.NODE_ENV;
 
 // ====== Middleware ======
 app.use(helmet());
 
 const allowedOrigins = process.env.ALLOWED_ORIGINS.split(",");
 app.use(
-  cors({
+  cors(/*{
     origin: function (origin, callback) {
       if (!origin) return callback(null, true);
       if (allowedOrigins.includes(origin)) {
@@ -39,7 +39,7 @@ app.use(
       }
     },
     credentials: true,
-  })
+  }*/)
 );
 
 app.use(express.json());
