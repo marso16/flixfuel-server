@@ -122,4 +122,26 @@ router.delete("/users/:_id", protect, admin, authController.deleteOneUser);
 router.delete("/users/", protect, admin, authController.deleteAllUsers);
 router.put("/users/:userId/role", authController.updateUserRole);
 
+router.post(
+  "/forgot-password",
+  [
+    body("email")
+      .isEmail()
+      .normalizeEmail()
+      .withMessage("Please enter a valid email"),
+  ],
+  authController.forgotPassword
+);
+
+router.post(
+  "/reset-password",
+  [
+    body("token").notEmpty().withMessage("Reset token is required"),
+    body("newPassword")
+      .isLength({ min: 6 })
+      .withMessage("New password must be at least 6 characters long"),
+  ],
+  authController.resetPassword
+);
+
 module.exports = router;

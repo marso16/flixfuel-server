@@ -1,7 +1,11 @@
 const { validationResult } = require("express-validator");
+const crypto = require("crypto");
 const User = require("../models/User");
 const generateToken = require("../utils/generateToken");
-const { sendOTPEmail } = require("../utils/emailService");
+const {
+  sendOTPEmail,
+  sendPasswordResetEmail,
+} = require("../utils/emailService");
 
 const sendOTP = async (req, res) => {
   try {
@@ -429,6 +433,106 @@ const updateUserRole = async (req, res) => {
   }
 };
 
+const forgotPassword = async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        message: "Validation failed",
+        errors: errors.array(),
+      });
+    }
+
+    const { email } = req.body;
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(200).json({
+        message:
+          "If an account with that email exists, we have sent a password reset link.",
+      });
+    }
+
+    if (!user.isActive) {
+      return res.status(400).json({ message: "Account is deactivated" });
+    }
+
+    // Generate reset token
+    const resetToken = user.generatePasswordResetToken();
+
+    await user.save();
+
+    // Send email
+    const emailResult = await sendPasswordResetEmail(
+      email,
+      resetToken,
+      user.name
+    );
+
+    if (!emailResult.success) {
+      user.passwordResetToken = undefined;
+      user.passwordResetExpires = undefined;
+      await user.save();
+
+      return res.status(500).json({
+        error: "Failed to send password reset email. Please try again.",
+      });
+    }
+
+    res.status(200).json({
+      message:
+        "If an account with that email exists, we have sent a password reset link.",
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const resetPassword = async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        message: "Validation failed",
+        errors: errors.array(),
+      });
+    }
+
+    const { token, newPassword } = req.body;
+
+    // Hash the token to compare with stored hash
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+
+    const user = await User.findOne({
+      passwordResetToken: hashedToken,
+      passwordResetExpires: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return res.status(400).json({
+        message: "Password reset token is invalid or has expired",
+      });
+    }
+
+    if (!user.isActive) {
+      return res.status(400).json({ message: "Account is deactivated" });
+    }
+
+    // Set new password
+    user.password = newPassword;
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+    await user.save();
+
+    res.status(200).json({
+      message:
+        "Password has been reset successfully. You can now log in with your new password.",
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 module.exports = {
   sendOTP,
   register,
@@ -443,4 +547,6 @@ module.exports = {
   deleteOneUser,
   deleteAllUsers,
   updateUserRole,
+  forgotPassword,
+  resetPassword,
 };

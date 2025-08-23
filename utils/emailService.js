@@ -1,4 +1,5 @@
 const nodemailer = require("nodemailer");
+require("dotenv").config({ quiet: true });
 
 // Create transporter (Gmail SMTP)
 const createTransporter = () => {
@@ -41,6 +42,55 @@ const sendOTPEmail = async (email, otp, name) => {
             </div>
             <p style="font-size: 14px; color: #777;">This OTP is valid for 10 minutes.</p>
             <p style="font-size: 14px; color: #aaa;">If you did not request this, please ignore this email.</p>
+          </div>
+          <div style="background-color: #f1f3f6; padding: 18px 30px; text-align: center; font-size: 12px; color: #999;">
+            Automated message — please do not reply.
+          </div>
+        </div>
+      </div>
+      `,
+    };
+
+    const result = await transporter.sendMail(mailOptions);
+    return { success: true, messageId: result.messageId };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+};
+
+/**
+ * Send Password Reset Email
+ * @param {string} email - Recipient email
+ * @param {string} resetToken - Password reset token
+ * @param {string} name - Recipient name
+ */
+const sendPasswordResetEmail = async (email, resetToken, name) => {
+  try {
+    const transporter = createTransporter();
+    const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
+
+    const mailOptions = {
+      from: process.env.EMAIL_FROM,
+      to: email,
+      subject: "🔐 Password Reset Request",
+      html: `
+      <div style="font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f9fafc; padding: 40px 20px;">
+        <div style="max-width: 600px; margin: auto; background: #ffffff; border-radius: 14px; box-shadow: 0 12px 24px rgba(0,0,0,0.08); overflow: hidden;">
+          <div style="background-color: #DC3545; padding: 30px; text-align: center;">
+            <h1 style="color: #fff; margin: 0; font-size: 28px; font-weight: 700;">Password Reset</h1>
+          </div>
+          <div style="padding: 40px 35px; color: #333; line-height: 1.6;">
+            <p style="font-size: 16px;">Hello <strong>${name}</strong>,</p>
+            <p style="font-size: 15px; color: #555;">You requested a password reset for your account. Click the button below to reset your password:</p>
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="${resetUrl}" style="display: inline-block; background: #DC3545; color: #fff; padding: 15px 30px; font-size: 16px; font-weight: 600; text-decoration: none; border-radius: 8px; box-shadow: 0 4px 12px rgba(220,53,69,0.3);">
+                Reset Password
+              </a>
+            </div>
+            <p style="font-size: 14px; color: #777;">This link is valid for 10 minutes.</p>
+            <p style="font-size: 14px; color: #aaa;">If you did not request this password reset, please ignore this email and your password will remain unchanged.</p>
+            <p style="font-size: 12px; color: #999; margin-top: 20px;">If the button doesn't work, copy and paste this link into your browser:<br>
+            <span style="word-break: break-all;">${resetUrl}</span></p>
           </div>
           <div style="background-color: #f1f3f6; padding: 18px 30px; text-align: center; font-size: 12px; color: #999;">
             Automated message — please do not reply.
@@ -141,4 +191,5 @@ const sendOrderEmail = async (email, order) => {
 module.exports = {
   sendOTPEmail,
   sendOrderEmail,
+  sendPasswordResetEmail,
 };
