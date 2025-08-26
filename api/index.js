@@ -57,6 +57,8 @@ app.get("/", (req, res) => {
 });
 
 // ====== DB Connection & Server Start ======
+mongoose.set("bufferTimeoutMS", 30000);
+
 mongoose
   .connect(MONGODB_URI)
   .then(() => {
