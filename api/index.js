@@ -53,7 +53,12 @@ app.use("/payment", paymentRoutes);
 app.use("/wishlist", wishlistRoutes);
 
 app.get("/", (req, res) => {
-  res.status(200).json({ message: "Hello World from backend" });
+  res.status(200).json({
+    status: "success",
+    message: "Server is running",
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime().toFixed(2) + "s"
+  });
 });
 
 // ====== DB Connection & Server Start ======
