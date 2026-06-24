@@ -67,17 +67,17 @@ mongoose.set("bufferTimeoutMS", 30000);
 mongoose
   .connect(MONGODB_URI)
   .then(() => {
-    console.log(chalk.green("🚀 DB CONNECTED"));
+    console.log(chalk.green("DB CONNECTED"));
 
     if (NODE_ENV === "development") {
       const PORT = process.env.PORT || 5000;
       app.listen(PORT, () =>
-        console.log(chalk.blue(`🌍 Server running on http://localhost:${PORT}`))
+        console.log(chalk.blue(`Server running on http://localhost:${PORT}`))
       );
     }
   })
   .catch((err) => {
-    console.error(chalk.red("❌ MongoDB connection failed:"), err.message);
+    console.error(chalk.red("MongoDB connection failed:"), err.message);
   });
 
 module.exports = app;
